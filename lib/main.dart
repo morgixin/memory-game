@@ -38,6 +38,12 @@ class _HomePageState extends State<HomePage> {
                         8, 8, 9, 9];
   List<String> images = ["bee", "cat", "chameleon", "chicken", "dolphin", "fox", "parrot", "sheep", "squirrel", "turtle"];
 
+   final List<int> _both = [0, 0, 1, 1,
+                        2, 2, 3, 3, 
+                        4, 4, 5, 5, 
+                        6, 6, 7, 7,
+                        8, 8, 9, 9];
+
   void embaralhaCards () {
     _numbers.shuffle();
   }
@@ -59,8 +65,43 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
   
+  Widget numberOrImg (int index){
+    String img = "bee";
+    switch (_numbers[index]){
+      case 5:
+      img = "bee";
+      break;
+      case 6:
+      img = "cat";
+      break;
+      case 7:
+      img = "chameleon";
+      break;
+      case 8:
+      img = "chicken";
+      break;
+      case 9:
+      img = "fox";
+      break;
+      
+    }
+    Widget image = Image(image: AssetImage("assets/images/$img.png"));
+    Widget numero = Text(
+      _numbers[index].toString(),
+      textAlign: TextAlign.center,
+      style: TextStyle(fontSize: 48),
+    );
+
+    if(_numbers[index] >= 5) return image;
+    return numero;
+  }
+
   @override
   Widget build(BuildContext context) {
+
+
+    double cardSizeHeigh = 50;
+    double cardSizeWidth = 30;
 
     if (showingCards){
       Timer(Duration(seconds: 2), (){
@@ -113,31 +154,36 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: 24.0,
+                  height: 12.0,
                 ),
-                Text("ERROS: ${erros.toString()}", style: TextStyle(fontSize: 36),),
+                Center(child: Text("tentativas: ${erros.toString()}", style: TextStyle(fontSize: 24),)),
                 SizedBox(
                   height: 24.0,
                 ),
-                Container(
-                  padding: EdgeInsets.all(10),
-                  child: GridView.builder(
-                    shrinkWrap: true,
-                      itemCount: 20,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        crossAxisSpacing: 16.0,
-                        mainAxisSpacing: 16.0,
-                      ),
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          child: card(context, index),
-                          onTap: () {
-                            _onSelected(index);
-                            print(index);
-                          },
-                          );
-                      }),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: Container(
+                    padding: EdgeInsets.all(20),
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                        itemCount: 20,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          childAspectRatio: 1,
+                          crossAxisCount: 4,
+                          crossAxisSpacing: 32.0,
+                          mainAxisSpacing: 16.0,
+                        ),
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            child: card(context, index),
+                            onTap: () {
+                              _onSelected(index);
+                              print(index);
+                            },
+                            );
+                        }),
+                  ),
                 )
               ],
             ),
@@ -172,7 +218,7 @@ Widget card(BuildContext context, int index){
         boxShadow: const [ BoxShadow(color: Color.fromARGB(255, 163, 162, 162), blurRadius: 5.0, offset: Offset(5, 5)) ],
         borderRadius: BorderRadius.all(Radius.circular(5))),
       height: 80,
-      width: 60,
+      width: 20,
       // child: lilnumber,
       child: lilnumber,
     );
@@ -212,31 +258,9 @@ Widget card(BuildContext context, int index){
   
   }
 
-  // TÁ ERRADO :(
+
   Widget bothCard (BuildContext context, int index) {
     Color corCard;
-    Widget lilthing = Text(
-          _numbers[index].toString(),
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 48),
-          );
-
-    if (index < 10){
-
-          (_selected[index]) ? lilthing = Text(
-        _numbers[index].toString(),
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 48),
-        ) : lilthing = Text("");
-
-    }
-
-    if(index >= 10) {
-      lilthing = Image(image: AssetImage("assets/images/${images[_numbers[index]]}.png"));
-      
-      (_selected[index]) ? lilthing = Image(image: AssetImage("assets/images/${images[_numbers[index]]}.png")) : lilthing = Text("");
-      }
-
 
 
 
@@ -253,10 +277,7 @@ Widget card(BuildContext context, int index){
       height: 80,
       width: 60,
       // child: lilnumber,
-      child: lilthing,
+      child: (_selected[index]) ? numberOrImg(index) : Text("")
     );
   }
-
-
-
 }
