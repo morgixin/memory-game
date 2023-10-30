@@ -28,28 +28,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  int opt = 3;
+  int opt = 2;
 
   final List<int> _numbers = [0, 0, 1, 1,
                         2, 2, 3, 3, 
                         4, 4, 5, 5, 
                         6, 6, 7, 7,
                         8, 8, 9, 9];
-  List<String> images = ["bee", "cat", "chameleon", "chicken", "dolphin", "fox", "parrot", "sheep", "squirrel", "turtle"];
+  final List<String> _images = ["bee", "cat", "chameleon", "chicken", "dolphin", "fox", "parrot", "sheep", "squirrel", "turtle"];
 
-   final List<int> _both = [0, 0, 1, 1,
-                        2, 2, 3, 3, 
-                        4, 4, 5, 5, 
-                        6, 6, 7, 7,
-                        8, 8, 9, 9];
-
-  void embaralhaCards () {
-    _numbers.shuffle();
-  }
 
   late Timer liltempo;
   bool showingCards = true;
+  bool gameHasStarted = false;
   
   List<bool> _selected = List.generate(20, (index) => true);
 
@@ -57,34 +48,54 @@ class _HomePageState extends State<HomePage> {
   List<int> numbersFound = [];
   List<int> indexSelected = [];
 
+  List<bool> isChecked = [false, false];
+
   int erros = 0;
 
+  void embaralhaCards () {
+    _numbers.shuffle();
+  }
+
   @override
-  void initState(){
+  void initState () {
     embaralhaCards();
     super.initState();
   }
   
+  Widget checkbox (BuildContext context, int index) {
+    return Checkbox(
+      checkColor: Colors.white,
+      value: isChecked[index],
+      onChanged: (bool? value) {
+        setState(() {
+          isChecked[index] = value!;
+        });
+      });
+  }
+  
   Widget numberOrImg (int index){
-    String img = "bee";
+    String img;
     switch (_numbers[index]){
       case 5:
-      img = "bee";
-      break;
+        img = "bee";
+        break;
       case 6:
-      img = "cat";
-      break;
+        img = "cat";
+        break;
       case 7:
-      img = "chameleon";
-      break;
+        img = "chameleon";
+        break;
       case 8:
-      img = "chicken";
-      break;
+        img = "chicken";
+        break;
       case 9:
-      img = "fox";
-      break;
-      
+        img = "fox";
+        break;
+      default:
+        img = "bee";
+        break;
     }
+    
     Widget image = Image(image: AssetImage("assets/images/$img.png"));
     Widget numero = Text(
       _numbers[index].toString(),
@@ -92,25 +103,22 @@ class _HomePageState extends State<HomePage> {
       style: TextStyle(fontSize: 48),
     );
 
-    if(_numbers[index] >= 5) return image;
+    if (_numbers[index] >= 5) return image;
     return numero;
   }
-
+  
   @override
   Widget build(BuildContext context) {
-
-
-    double cardSizeHeigh = 50;
-    double cardSizeWidth = 30;
-
-    if (showingCards){
-      Timer(Duration(seconds: 2), (){
-        _selected = List.generate(20, (index) => false);
-        showingCards = false;
-        setState(() {
-          
+    if (gameHasStarted) {
+      if (showingCards) {
+        Timer (Duration(seconds: 2), () {
+          _selected = List.generate(20, (index) => false);
+          showingCards = false;
+          setState(() {
+            
+          });
         });
-      });
+      }
     }
 
     _onSelected (index) async {
@@ -131,7 +139,6 @@ class _HomePageState extends State<HomePage> {
           if(numbersSelected[0] == numbersSelected[1]){
             numbersFound.add(numbersSelected[0]);
             numbersFound.add(numbersSelected[1]);
-            print("engual eu");
           }
           else{
 
@@ -156,6 +163,25 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   height: 12.0,
                 ),
+                if (!gameHasStarted) ... [
+                  Text("selecione o modo de jogo:", style: TextStyle(fontSize: 24),),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                    checkbox(context, 0), Text("imagens"), 
+                    checkbox(context, 1), Text("numeros")
+                    ]
+                  ),
+                  
+                  Center(
+                    child:  ElevatedButton(
+                      child: Text("iniciar jogo!"), 
+                      onPressed: () {
+                        setState(() { gameHasStarted = true; });
+                      },
+                    )
+                  ),
+                ],
                 Center(child: Text("tentativas: ${erros.toString()}", style: TextStyle(fontSize: 24),)),
                 SizedBox(
                   height: 24.0,
@@ -190,94 +216,86 @@ class _HomePageState extends State<HomePage> {
         ));
   }
 
-Widget card(BuildContext context, int index){
-  if (opt == 1) return NumberCard(context, index);
-  if (opt == 2) return ImageCard(context, index);
+Widget card (BuildContext context, int index) {
+  if (opt == 1) return numberCard(context, index);
+  if (opt == 2) return imageCard(context, index);
   return bothCard(context, index);
+}
+
+Widget numberCard (BuildContext context, int index) {
+  Color corCard;
+  Widget lilnumber = Text(
+      _numbers[index].toString(),
+      textAlign: TextAlign.center,
+      style: TextStyle(fontSize: 48),
+      );
+
+  (_selected[index]) ? corCard = Colors.white : corCard = Color.fromARGB(255, 205, 205, 205);
+
+  (_selected[index]) ? lilnumber = Text(
+      _numbers[index].toString(),
+      textAlign: TextAlign.center,
+      style: TextStyle(fontSize: 48),
+      ) : lilnumber = Text("");
+  
+  return Ink(
+    decoration: BoxDecoration(
+      color: corCard,
+      boxShadow: const [ BoxShadow(color: Color.fromARGB(255, 163, 162, 162), blurRadius: 5.0, offset: Offset(5, 5)) ],
+      borderRadius: BorderRadius.all(Radius.circular(5))),
+    height: 80,
+    width: 20,
+    child: lilnumber,
+  );
+}
+
+Widget imageCard (BuildContext context, int index) {
+  Color corCard;
+  Widget lilnumber = Text(
+      _numbers[index].toString(),
+      textAlign: TextAlign.center,
+      style: TextStyle(fontSize: 48),
+      );
+
+  Widget lilimg = Image(image: AssetImage("assets/images/${_images[_numbers[index]]}.png"));
+
+  (_selected[index]) ? corCard = Colors.white : corCard = Color.fromARGB(255, 205, 205, 205);
+
+  // (_selected[index]) ? lilnumber = Text(
+  //     _numbers[index].toString(),
+  //     textAlign: TextAlign.center,
+  //     style: TextStyle(fontSize: 48),
+  //     ) : lilnumber = Text("");
+  
+  (_selected[index]) ? lilimg = Image(image: AssetImage("assets/images/${_images[_numbers[index]]}.png")) : lilimg = Text("");
+
+  return Ink(
+    decoration: BoxDecoration(
+      color: corCard,
+      boxShadow: const [ BoxShadow(color: Color.fromARGB(255, 163, 162, 162), blurRadius: 5.0, offset: Offset(5, 5)) ],
+      borderRadius: BorderRadius.all(Radius.circular(5))),
+    height: 80,
+    width: 60,
+    child: lilimg,
+  );
+
 
 }
-  Widget NumberCard (BuildContext context, int index) {
-    Color corCard;
-    Widget lilnumber = Text(
-        _numbers[index].toString(),
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 48),
-        );
 
-    (_selected[index]) ? corCard = Colors.white : corCard = Color.fromARGB(255, 205, 205, 205);
+Widget bothCard (BuildContext context, int index) {
+  Color corCard;
 
-    (_selected[index]) ? lilnumber = Text(
-        _numbers[index].toString(),
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 48),
-        ) : lilnumber = Text("");
-    
-    return Ink(
-      decoration: BoxDecoration(
-        color: corCard,
-        boxShadow: const [ BoxShadow(color: Color.fromARGB(255, 163, 162, 162), blurRadius: 5.0, offset: Offset(5, 5)) ],
-        borderRadius: BorderRadius.all(Radius.circular(5))),
-      height: 80,
-      width: 20,
-      // child: lilnumber,
-      child: lilnumber,
-    );
-  }
+  (_selected[index]) ? corCard = Colors.white : corCard = Color.fromARGB(255, 205, 205, 205);
 
-  Widget ImageCard (BuildContext context, int index) {
-    Color corCard;
-    Widget lilnumber = Text(
-        _numbers[index].toString(),
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 48),
-        );
-
-    Widget lilimg = Image(image: AssetImage("assets/images/${images[_numbers[index]]}.png"));
-
-    (_selected[index]) ? corCard = Colors.white : corCard = Color.fromARGB(255, 205, 205, 205);
-
-    (_selected[index]) ? lilnumber = Text(
-        _numbers[index].toString(),
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 48),
-        ) : lilnumber = Text("");
-    
-    (_selected[index]) ? lilimg = Image(image: AssetImage("assets/images/${images[_numbers[index]]}.png")) : lilimg = Text("");
-
-    return Ink(
-      decoration: BoxDecoration(
-        color: corCard,
-        boxShadow: const [ BoxShadow(color: Color.fromARGB(255, 163, 162, 162), blurRadius: 5.0, offset: Offset(5, 5)) ],
-        borderRadius: BorderRadius.all(Radius.circular(5))),
-      height: 80,
-      width: 60,
-      // child: lilnumber,
-      child: lilimg,
-    );
-  
-  
-  }
-
-
-  Widget bothCard (BuildContext context, int index) {
-    Color corCard;
-
-
-
-    (_selected[index]) ? corCard = Colors.white : corCard = Color.fromARGB(255, 205, 205, 205);
-
-    
-    
-
-    return Ink(
-      decoration: BoxDecoration(
-        color: corCard,
-        boxShadow: const [ BoxShadow(color: Color.fromARGB(255, 163, 162, 162), blurRadius: 5.0, offset: Offset(5, 5)) ],
-        borderRadius: BorderRadius.all(Radius.circular(5))),
-      height: 80,
-      width: 60,
-      // child: lilnumber,
-      child: (_selected[index]) ? numberOrImg(index) : Text("")
-    );
-  }
+  return Ink(
+    decoration: BoxDecoration(
+      color: corCard,
+      boxShadow: const [ BoxShadow(color: Color.fromARGB(255, 163, 162, 162), blurRadius: 5.0, offset: Offset(5, 5)) ],
+      borderRadius: BorderRadius.all(Radius.circular(5))),
+    height: 80,
+    width: 60,
+    // child: lilnumber,
+    child: (_selected[index]) ? numberOrImg(index) : Text("")
+  );
+}
 }
