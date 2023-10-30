@@ -1,16 +1,11 @@
-# memorygame
+<img src="/assets/images/cat.png" height=120>
 
-A new Flutter project.
+# memory-game
+
+A simple memory game made using Flutter Framework.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+> ### Desktop
+> 
+> Download the files and install Flutter SDK on your machine. Run ```flutter doctor``` on command line and follow the recommendations. After that, run ```flutter run``` on the directory where the game was downloaded and enjoy!
