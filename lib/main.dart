@@ -27,7 +27,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<int> _numbers = [0, 0, 1, 1,
+  List<int> _numbers = [0, 0, 1, 1,
                         2, 2, 3, 3, 
                         4, 4, 5, 5, 
                         6, 6, 7, 7,
@@ -52,6 +52,15 @@ class _HomePageState extends State<HomePage> {
 
   void embaralhaCards () {
     _numbers.shuffle();
+  }
+
+  void restart() {
+    embaralhaCards();
+    numbersFound.clear();
+    numbersSelected.clear();
+    indexSelected.clear();
+    _selected = List.generate(20, (index) => true);
+    tentativas = 0;
   }
 
   @override
@@ -125,10 +134,14 @@ class _HomePageState extends State<HomePage> {
       }
       
       if (numbersFound.length == 20) {
-        gameHasStarted = false;
-        showStats = true;
+        setState(() {
+          gameHasStarted = false;
+          showStats = true;
+          
+        });
       }
     }
+
     _onSelected (index) async {
       if (numbersFound.contains(_numbers[index]) == false && numbersSelected.length < 2) {
         // bloqueia seleção de cards se o par do número já não tiver sido encontrado
@@ -233,11 +246,16 @@ class _HomePageState extends State<HomePage> {
                     SizedBox( height: 24.0 ),
                     Center(
                       child:  ElevatedButton(
-                        child: Text("iniciar jogo!"), 
+                        child: Text("iniciar jogo!", style: TextStyle(fontSize: 18),), 
                         onPressed: () {
                           (!isChecked[0] && !isChecked[1]) ?
                             setState(() { alertIsOn = true; })
-                            : setState(() { gameHasStarted = true; });
+                            : setState(() { 
+                              restart();
+                              showStats = false;
+                              showingCards = true;
+                              gameHasStarted = true; 
+                          });
                         },
                       )
                     ),
