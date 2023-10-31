@@ -13,4 +13,4 @@ A simple memory game made using Flutter Framework.
 
 ## Assets Credits
 
-Icons by Freepik and Graficon.
+Icons obtained from Flaticon, owned and made by Freepik and Graficon.
