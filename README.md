@@ -9,3 +9,8 @@ A simple memory game made using Flutter Framework.
 > ### Desktop
 > 
 > Download the files and install Flutter SDK on your machine. Run ```flutter doctor``` on command line and follow the recommendations. After that, run ```flutter run``` on the directory where the game was downloaded and enjoy!
+
+
+## Assets Credits
+
+Icons by Freepik and Graficon.
