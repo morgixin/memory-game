@@ -8,7 +8,7 @@ A simple memory game made using Flutter Framework.
 
 > ### Desktop
 > 
-> Download the files and install Flutter SDK on your machine. Run ```flutter doctor``` on command line and follow the recommendations. After that, run ```flutter run``` on the directory where the game was downloaded and enjoy!
+> Download the files and install Flutter SDK on your machine. Run ```flutter doctor``` on command line and follow the recommendations. After that, run ```flutter create .``` on the directory where the app was downloaded, remove the ```test/``` dir, then run ```flutter run``` and enjoy!
 
 
 ## Assets Credits
